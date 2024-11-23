@@ -1,60 +1,69 @@
 # Quantum IDE
 
-An advanced, AI-powered Integrated Development Environment built with Electron and modern web technologies. Quantum IDE aims to revolutionize software development with intelligent features, seamless integration, and a powerful, extensible architecture.
+A modern, extensible integrated development environment built with Electron, featuring VS Code-like functionality and advanced features.
 
 ## Features
 
-- 🚀 **Modern Interface**: Clean, intuitive UI with customizable layouts and themes
-- 📝 **Advanced Code Editor**: Powered by Monaco Editor with intelligent code completion
-- 🤖 **AI Integration**: Smart code suggestions, refactoring, and documentation
-- 🗄️ **File Management**: Integrated file explorer with quick navigation
-- ⚡ **Command Palette**: Quick access to all IDE features (Ctrl/Cmd + P)
-- 🔍 **Smart Search**: Advanced code search with regex support
-- 📦 **Git Integration**: Built-in version control features
+- 🎨 **Modern Interface**: Clean, intuitive design with customizable themes
+- 📝 **Advanced Editor**: Powered by Monaco Editor with features like:
+  - Syntax highlighting
+  - Code completion
+  - Multi-cursor editing
+  - Code folding
+  - Minimap
+- 🔍 **Smart Search**: Full-text search across files with regex support
+- 📁 **File Explorer**: VS Code-style file tree with Git status indicators
+- ⚡ **Git Integration**: Built-in Git support with:
+  - File status indicators
+  - Branch management
+  - Commit, push, pull operations
+  - Diff viewer
 - 🖥️ **Integrated Terminal**: Full-featured terminal emulator
-- 🎨 **Themes**: Light and dark themes with customizable colors
-- 🔌 **Extensions**: Modular architecture supporting custom extensions
+- 🎯 **Command Palette**: Quick access to all IDE features
+- 🔄 **Session Management**: Automatic saving of workspace state
 
-## Getting Started
+## Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/vgcman16/quantum-ide.git
+
+# Navigate to project directory
+cd quantum-ide
+
+# Install dependencies
+npm install
+
+# Start the application
+npm run dev
+```
+
+## Development Setup
 
 ### Prerequisites
 
-- Node.js >= 16.0.0
-- npm >= 7.0.0
+- Node.js (v14 or higher)
+- npm (v6 or higher)
+- Git
 
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/quantum-ide.git
-   cd quantum-ide
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-### Building
-
-To build the application for your platform:
+### Development Commands
 
 ```bash
-# For all platforms
+# Run in development mode
+npm run dev
+
+# Build the application
 npm run build
 
-# For specific platforms
-npm run build:mac
-npm run build:win
-npm run build:linux
-```
+# Run tests
+npm test
 
-## Development
+# Lint code
+npm run lint
+
+# Format code
+npm run format
+```
 
 ### Project Structure
 
@@ -62,65 +71,99 @@ npm run build:linux
 quantum-ide/
 ├── src/
 │   ├── main/           # Main process code
+│   │   ├── main.js     # Main application entry
+│   │   ├── git.js      # Git service
+│   │   └── search.js   # Search service
 │   ├── renderer/       # Renderer process code
-│   │   ├── js/        # JavaScript modules
-│   │   ├── styles/    # CSS styles
-│   │   └── index.html # Main window
-│   └── preload.js     # Preload script
-├── tests/             # Test files
-└── package.json       # Project configuration
+│   │   ├── js/         # JavaScript modules
+│   │   │   ├── app.js  # Main renderer entry
+│   │   │   ├── editor/
+│   │   │   ├── explorer/
+│   │   │   ├── terminal/
+│   │   │   ├── search/
+│   │   │   ├── git/
+│   │   │   ├── commands/
+│   │   │   └── common/
+│   │   └── styles/     # CSS styles
+│   └── preload.js      # Preload script
+├── tests/              # Test files
+├── scripts/            # Build and utility scripts
+└── package.json
 ```
 
-### Key Components
+## Features in Detail
 
-- **EditorManager**: Handles code editing functionality using Monaco Editor
-- **FileExplorer**: Manages file system operations and navigation
-- **Terminal**: Provides integrated terminal functionality
-- **CommandPalette**: Quick command execution and navigation
-- **ThemeManager**: Handles UI themes and editor color schemes
-- **EventBus**: Central event management system
+### Editor
 
-### Contributing
+The editor is powered by Monaco Editor (the same editor used in VS Code) and includes:
+
+- Syntax highlighting for multiple languages
+- IntelliSense code completion
+- Multi-cursor editing
+- Code folding
+- Minimap navigation
+- Find and replace with regex support
+- Format document support
+
+### Git Integration
+
+Built-in Git support provides:
+
+- File status indicators in file explorer
+- Stage/unstage files
+- Commit changes
+- Push/pull operations
+- Branch management
+- Diff viewer
+- Merge conflict resolution
+
+### Search
+
+Advanced search capabilities include:
+
+- Full-text search across files
+- Regular expression support
+- Case sensitive/insensitive search
+- Whole word matching
+- Replace in files
+- Search results preview
+
+### Terminal
+
+Integrated terminal features:
+
+- Full PTY support
+- Multiple terminal instances
+- Command history
+- Custom shell configuration
+- Split terminal support
+
+### Command Palette
+
+Quick access to all IDE features:
+
+- Keyboard shortcut support
+- Fuzzy matching
+- Recently used commands
+- Custom command registration
+
+## Keyboard Shortcuts
+
+- `Ctrl/Cmd + P`: Open command palette
+- `Ctrl/Cmd + S`: Save file
+- `Ctrl/Cmd + N`: New file
+- `Ctrl/Cmd + Shift + F`: Find in files
+- `Ctrl/Cmd + Shift + G`: Git commands
+- `Ctrl/Cmd + \``: Toggle terminal
+- `Shift + Alt + F`: Format document
+
+## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-### Code Style
-
-The project uses ESLint and Prettier for code formatting. Before submitting a PR:
-
-```bash
-# Run linter
-npm run lint
-
-# Run tests
-npm test
-```
-
-## Configuration
-
-### Settings
-
-User settings are stored in:
-- Windows: `%APPDATA%/quantum-ide/settings.json`
-- macOS: `~/Library/Application Support/quantum-ide/settings.json`
-- Linux: `~/.config/quantum-ide/settings.json`
-
-### Keyboard Shortcuts
-
-Default keyboard shortcuts can be customized in the settings:
-
-- `Ctrl/Cmd + P`: Command Palette
-- `Ctrl/Cmd + B`: Toggle Sidebar
-- `Ctrl/Cmd + J`: Toggle Terminal
-- `Ctrl/Cmd + S`: Save File
-- `Ctrl/Cmd + Shift + S`: Save All Files
-- `Ctrl/Cmd + K`: Clear Terminal
-- `Ctrl/Cmd + F`: Find in File
-- `Ctrl/Cmd + Shift + F`: Find in Project
 
 ## License
 
@@ -135,15 +178,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-For support, please open an issue in the GitHub repository or contact the maintainers directly.
-
-## Roadmap
-
-See the [open issues](https://github.com/yourusername/quantum-ide/issues) for a list of proposed features and known issues.
-
-- [ ] AI-powered code completion
-- [ ] Real-time collaboration
-- [ ] Integrated debugger
-- [ ] Custom extension marketplace
-- [ ] Cloud synchronization
-- [ ] Performance profiling tools
+For support, please open an issue in the GitHub repository.
