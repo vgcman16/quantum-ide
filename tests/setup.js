@@ -1,5 +1,10 @@
-// Mock DOM environment setup
+// Import required polyfills
+const { TextEncoder, TextDecoder } = require('util');
 const { JSDOM } = require('jsdom');
+
+// Add TextEncoder and TextDecoder to global scope
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
 
 const dom = new JSDOM('<!doctype html><html><body></body></html>', {
     url: 'http://localhost',
