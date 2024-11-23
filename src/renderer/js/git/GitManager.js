@@ -1,7 +1,6 @@
 export class GitManager {
     constructor({ eventBus }) {
         this.eventBus = eventBus;
-        this.initialize();
     }
 
     async initialize() {
@@ -113,8 +112,7 @@ export class GitManager {
 
     async getBranches() {
         try {
-            const branches = await window.electron.invoke('git.getBranches');
-            return branches;
+            return await window.electron.invoke('git.getBranches');
         } catch (error) {
             console.error('Failed to get branches:', error);
             this.eventBus.emit('git.error', error);
@@ -124,8 +122,7 @@ export class GitManager {
 
     async getCommitHistory(limit = 10) {
         try {
-            const history = await window.electron.invoke('git.log', { limit });
-            return history;
+            return await window.electron.invoke('git.log', { limit });
         } catch (error) {
             console.error('Failed to get commit history:', error);
             this.eventBus.emit('git.error', error);

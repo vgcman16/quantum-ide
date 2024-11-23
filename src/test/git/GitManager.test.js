@@ -43,10 +43,8 @@ describe('GitManager', () => {
         });
 
         it('should not get branch if not a repo', async () => {
-            // Create a new instance to avoid constructor initialization
-            const newGitManager = new GitManager({ eventBus });
             mockElectron.invoke.mockResolvedValueOnce(false);
-            await newGitManager.initialize();
+            await gitManager.initialize();
             expect(mockElectron.invoke).toHaveBeenCalledTimes(1);
             expect(mockElectron.invoke).toHaveBeenCalledWith('git.isRepo');
         });
@@ -66,9 +64,8 @@ describe('GitManager', () => {
     describe('Git operations', () => {
         beforeEach(async () => {
             mockElectron.invoke
-                .mockResolvedValueOnce(true)
-                .mockResolvedValueOnce('main')
-                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
+                .mockResolvedValueOnce(true) // isRepo
+                .mockResolvedValueOnce('main') // getCurrentBranch
             await gitManager.initialize();
             mockElectron.invoke.mockClear();
         });
@@ -160,9 +157,8 @@ describe('GitManager', () => {
     describe('Event handling', () => {
         beforeEach(async () => {
             mockElectron.invoke
-                .mockResolvedValueOnce(true)
-                .mockResolvedValueOnce('main')
-                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
+                .mockResolvedValueOnce(true) // isRepo
+                .mockResolvedValueOnce('main') // getCurrentBranch
             await gitManager.initialize();
             mockElectron.invoke.mockClear();
         });
@@ -182,7 +178,7 @@ describe('GitManager', () => {
             await gitManager.refreshStatus();
 
             expect(statusChangedHandler).toHaveBeenCalledWith({
-                branch: 'main',
+                branch: mockStatus.branch,
                 changes: mockStatus.files
             });
         });
@@ -215,9 +211,8 @@ describe('GitManager', () => {
     describe('Error handling', () => {
         beforeEach(async () => {
             mockElectron.invoke
-                .mockResolvedValueOnce(true)
-                .mockResolvedValueOnce('main')
-                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
+                .mockResolvedValueOnce(true) // isRepo
+                .mockResolvedValueOnce('main') // getCurrentBranch
             await gitManager.initialize();
             mockElectron.invoke.mockClear();
         });
