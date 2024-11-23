@@ -20,7 +20,6 @@ describe('GitManager', () => {
 
         // Create GitManager instance
         gitManager = new GitManager({ eventBus });
-        jest.clearAllMocks();
     });
 
     afterEach(() => {
@@ -51,9 +50,12 @@ describe('GitManager', () => {
         it('should emit initialization error', async () => {
             const error = new Error('Git not found');
             mockElectron.invoke.mockRejectedValueOnce(error);
-            const emitSpy = jest.spyOn(eventBus, 'emit');
-            await gitManager.initialize();
-            expect(emitSpy).toHaveBeenCalledWith('git.error', error);
+
+            const errorHandler = jest.fn();
+            eventBus.on('git.error', errorHandler);
+
+            await expect(gitManager.initialize()).rejects.toThrow('Git not found');
+            expect(errorHandler).toHaveBeenCalledWith(error);
         });
     });
 
@@ -61,47 +63,69 @@ describe('GitManager', () => {
         beforeEach(async () => {
             mockElectron.invoke
                 .mockResolvedValueOnce(true)
-                .mockResolvedValueOnce('main');
+                .mockResolvedValueOnce('main')
+                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
             await gitManager.initialize();
             mockElectron.invoke.mockClear();
         });
 
         it('should stage a file', async () => {
             const path = 'test.js';
+            mockElectron.invoke
+                .mockResolvedValueOnce(undefined) // stage
+                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
             await gitManager.stage(path);
             expect(mockElectron.invoke).toHaveBeenCalledWith('git.stage', { path });
         });
 
         it('should unstage a file', async () => {
             const path = 'test.js';
+            mockElectron.invoke
+                .mockResolvedValueOnce(undefined) // unstage
+                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
             await gitManager.unstage(path);
             expect(mockElectron.invoke).toHaveBeenCalledWith('git.unstage', { path });
         });
 
         it('should commit changes', async () => {
             const message = 'test commit';
+            mockElectron.invoke
+                .mockResolvedValueOnce(undefined) // commit
+                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
             await gitManager.commit(message);
             expect(mockElectron.invoke).toHaveBeenCalledWith('git.commit', { message });
         });
 
         it('should push changes', async () => {
+            mockElectron.invoke
+                .mockResolvedValueOnce(undefined) // push
+                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
             await gitManager.push();
             expect(mockElectron.invoke).toHaveBeenCalledWith('git.push');
         });
 
         it('should pull changes', async () => {
+            mockElectron.invoke
+                .mockResolvedValueOnce(undefined) // pull
+                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
             await gitManager.pull();
             expect(mockElectron.invoke).toHaveBeenCalledWith('git.pull');
         });
 
         it('should checkout branch', async () => {
             const branch = 'feature';
+            mockElectron.invoke
+                .mockResolvedValueOnce(undefined) // checkout
+                .mockResolvedValueOnce({ branch: 'feature', files: [] }); // status
             await gitManager.checkout(branch);
             expect(mockElectron.invoke).toHaveBeenCalledWith('git.checkout', { branch });
         });
 
         it('should create branch', async () => {
             const name = 'feature';
+            mockElectron.invoke
+                .mockResolvedValueOnce(undefined) // createBranch
+                .mockResolvedValueOnce({ branch: 'feature', files: [] }); // status
             await gitManager.createBranch(name);
             expect(mockElectron.invoke).toHaveBeenCalledWith('git.createBranch', { name });
         });
@@ -133,7 +157,8 @@ describe('GitManager', () => {
         beforeEach(async () => {
             mockElectron.invoke
                 .mockResolvedValueOnce(true)
-                .mockResolvedValueOnce('main');
+                .mockResolvedValueOnce('main')
+                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
             await gitManager.initialize();
             mockElectron.invoke.mockClear();
         });
@@ -159,14 +184,14 @@ describe('GitManager', () => {
         });
 
         it('should handle file change events', async () => {
-            const mockStatus = {
-                branch: 'main',
-                files: []
-            };
-            mockElectron.invoke.mockResolvedValueOnce(mockStatus);
+            mockElectron.invoke.mockResolvedValueOnce({ branch: 'main', files: [] });
+            gitManager.setupEventHandlers();
 
             const path = 'test.js';
             eventBus.emit('editor.contentChanged', { path });
+
+            // Wait for async operation to complete
+            await new Promise(resolve => setTimeout(resolve, 0));
 
             expect(mockElectron.invoke).toHaveBeenCalledWith('git.status');
         });
@@ -188,7 +213,8 @@ describe('GitManager', () => {
         beforeEach(async () => {
             mockElectron.invoke
                 .mockResolvedValueOnce(true)
-                .mockResolvedValueOnce('main');
+                .mockResolvedValueOnce('main')
+                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
             await gitManager.initialize();
             mockElectron.invoke.mockClear();
         });
