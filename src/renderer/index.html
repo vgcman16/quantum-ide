@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="styles/editor.css">
     <link rel="stylesheet" href="styles/sidebar.css">
     <link rel="stylesheet" href="styles/search.css">
+    <link rel="stylesheet" href="styles/status-bar.css">
     <!-- Load xterm styles -->
     <link rel="stylesheet" href="http://localhost:3033/node_modules/xterm/css/xterm.css">
     <!-- Load xterm and addons -->
@@ -33,14 +34,14 @@
             </div>
         </div>
 
-        <!-- Main editor area -->
+        <!-- Main content area -->
         <div id="main-content">
-            <div id="tabs-container"></div>
             <div id="editor-container"></div>
+            <div id="terminal-panel" class="panel"></div>
         </div>
 
-        <!-- Terminal panel -->
-        <div id="terminal-panel" class="panel"></div>
+        <!-- Status bar -->
+        <div id="status-bar"></div>
     </div>
 
     <!-- Load Monaco Editor -->

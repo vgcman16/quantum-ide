@@ -6,6 +6,7 @@ import { ThemeManager } from './common/ThemeManager.js';
 import { CommandPalette } from './commands/CommandPalette.js';
 import { SearchPanel } from './search/SearchPanel.js';
 import { GitManager } from './git/GitManager.js';
+import { StatusBar } from './common/StatusBar.js';
 
 class QuantumIDEApp {
     constructor() {
@@ -82,6 +83,12 @@ class QuantumIDEApp {
             eventBus: this.eventBus
         });
 
+        // Initialize status bar
+        this.statusBar = new StatusBar({
+            container: document.getElementById('status-bar'),
+            eventBus: this.eventBus
+        });
+
         // Initialize command palette
         this.commandPalette = new CommandPalette({
             eventBus: this.eventBus
@@ -129,8 +136,45 @@ class QuantumIDEApp {
         this.eventBus.on('git.statusChanged', ({ branch, changes }) => {
             // Update file explorer with Git status
             this.fileExplorer.updateGitStatus(changes);
-            // Update status bar with branch info
-            this.updateStatusBar(branch);
+            // Update status bar with Git info
+            this.statusBar.updateGitInfo(branch, changes);
+        });
+
+        // Handle editor cursor position changes
+        this.eventBus.on('editor.cursorChanged', ({ line, column }) => {
+            this.statusBar.updateCursorPosition(line, column);
+        });
+
+        // Handle active file changes
+        this.eventBus.on('editor.activeFileChanged', ({ path }) => {
+            this.statusBar.updateFileInfo(path);
+        });
+
+        // Handle Git branch selection
+        this.eventBus.on('git.showBranches', async () => {
+            try {
+                const branches = await window.electron.invoke('git.getBranches');
+                // TODO: Show branch selection UI
+                this.commandPalette.show('Switch Branch', branches.map(b => ({
+                    label: b.name,
+                    handler: () => this.gitManager.checkout(b.name)
+                })));
+            } catch (error) {
+                console.error('Failed to get branches:', error);
+                this.statusBar.showMessage('Failed to get branches', 'error');
+            }
+        });
+
+        // Handle Git sync
+        this.eventBus.on('git.showSync', async () => {
+            try {
+                await this.gitManager.pull();
+                await this.gitManager.push();
+                this.statusBar.showMessage('Successfully synced with remote', 'success');
+            } catch (error) {
+                console.error('Failed to sync with remote:', error);
+                this.statusBar.showMessage('Failed to sync with remote', 'error');
+            }
         });
     }
 
@@ -217,12 +261,14 @@ class QuantumIDEApp {
                 handler: () => this.gitManager.pull()
             },
             {
+                id: 'git.sync',
+                title: 'Git: Sync',
+                handler: () => this.eventBus.emit('git.showSync')
+            },
+            {
                 id: 'git.checkout',
                 title: 'Git: Checkout Branch',
-                handler: async () => {
-                    const branches = await this.gitManager.getBranches();
-                    // TODO: Show branch selection UI
-                }
+                handler: () => this.eventBus.emit('git.showBranches')
             },
             {
                 id: 'edit.format',
@@ -235,11 +281,6 @@ class QuantumIDEApp {
         commands.forEach(command => {
             this.commandPalette.registerCommand(command);
         });
-    }
-
-    updateStatusBar(branch) {
-        // TODO: Implement status bar UI
-        console.log(`Current branch: ${branch}`);
     }
 
     async loadSessionState() {

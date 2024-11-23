@@ -1,0 +1,231 @@
+/* Status bar container */
+.status-bar {
+    height: 22px;
+    background-color: #007acc;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    user-select: none;
+}
+
+/* Status sections */
+.status-section {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.status-section.left {
+    flex: 1;
+}
+
+.status-section.center {
+    flex: 2;
+    justify-content: center;
+    position: relative;
+}
+
+.status-section.right {
+    flex: 1;
+    justify-content: flex-end;
+}
+
+/* Git info */
+.git-info {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    height: 100%;
+    cursor: pointer;
+    gap: 4px;
+}
+
+.git-info:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.branch-icon {
+    font-size: 14px;
+    margin-right: 2px;
+}
+
+.branch-name {
+    margin-right: 4px;
+}
+
+.sync-status {
+    display: flex;
+    gap: 4px;
+    font-family: monospace;
+}
+
+.up-arrow,
+.down-arrow {
+    opacity: 0.8;
+}
+
+.up-arrow.has-changes,
+.down-arrow.has-changes {
+    opacity: 1;
+    font-weight: bold;
+}
+
+/* Cursor position */
+.cursor-position {
+    padding: 0 8px;
+    opacity: 0.8;
+}
+
+.cursor-position:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.12);
+    cursor: pointer;
+}
+
+/* File info */
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px;
+    height: 100%;
+}
+
+.file-info > span {
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.file-info > span:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Status messages */
+.status-message {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0 10px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    background-color: inherit;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.status-message.info {
+    background-color: #007acc;
+}
+
+.status-message.warning {
+    background-color: #ddb100;
+}
+
+.status-message.error {
+    background-color: #f14c4c;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Hover effects */
+.status-bar > * {
+    position: relative;
+}
+
+.status-bar > *:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 8px;
+    background-color: #252526;
+    border: 1px solid #454545;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+/* Separators */
+.status-section:not(:last-child)::after {
+    content: '';
+    height: 60%;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.4);
+    margin: 0 8px;
+}
+
+/* Clickable items */
+[data-command] {
+    cursor: pointer;
+}
+
+[data-command]:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Status indicators */
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.status-indicator.success {
+    background-color: #89d185;
+}
+
+.status-indicator.warning {
+    background-color: #cca700;
+}
+
+.status-indicator.error {
+    background-color: #f14c4c;
+}
+
+/* Progress bar */
+.progress-bar {
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.4);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.progress-bar .fill {
+    height: 100%;
+    background-color: #ffffff;
+    width: 0%;
+    transition: width 0.2s ease-in-out;
+}
+
+/* Animations */
+@keyframes progress {
+    0% {
+        width: 0%;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+.progress-bar.indeterminate .fill {
+    animation: progress 2s infinite linear;
+}
