@@ -9,7 +9,6 @@ export class GitManager {
             const isRepo = await window.electron.invoke('git.isRepo');
             if (isRepo) {
                 const branch = await window.electron.invoke('git.getCurrentBranch');
-                // Don't refresh status during initialization
                 this.eventBus.emit('git.statusChanged', { branch, changes: [] });
             }
             console.log('Git Manager initialized successfully');
@@ -25,11 +24,12 @@ export class GitManager {
             const status = await window.electron.invoke('git.status');
             this.eventBus.emit('git.statusChanged', {
                 branch: status.branch,
-                changes: status.files
+                changes: status.files || []
             });
         } catch (error) {
             console.error('Failed to refresh git status:', error);
             this.eventBus.emit('git.error', error);
+            throw error;
         }
     }
 
@@ -112,7 +112,8 @@ export class GitManager {
 
     async getBranches() {
         try {
-            return await window.electron.invoke('git.getBranches');
+            const branches = await window.electron.invoke('git.getBranches');
+            return branches;
         } catch (error) {
             console.error('Failed to get branches:', error);
             this.eventBus.emit('git.error', error);
@@ -122,7 +123,8 @@ export class GitManager {
 
     async getCommitHistory(limit = 10) {
         try {
-            return await window.electron.invoke('git.log', { limit });
+            const history = await window.electron.invoke('git.log', { limit });
+            return history;
         } catch (error) {
             console.error('Failed to get commit history:', error);
             this.eventBus.emit('git.error', error);

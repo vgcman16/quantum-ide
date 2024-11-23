@@ -29,6 +29,7 @@ describe('GitManager', () => {
     describe('initialization', () => {
         it('should check if directory is a git repo on init', async () => {
             mockElectron.invoke.mockResolvedValueOnce(true);
+            mockElectron.invoke.mockResolvedValueOnce('main');
             await gitManager.initialize();
             expect(mockElectron.invoke).toHaveBeenCalledWith('git.isRepo');
         });
@@ -63,8 +64,7 @@ describe('GitManager', () => {
         beforeEach(async () => {
             mockElectron.invoke
                 .mockResolvedValueOnce(true)
-                .mockResolvedValueOnce('main')
-                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
+                .mockResolvedValueOnce('main');
             await gitManager.initialize();
             mockElectron.invoke.mockClear();
         });
@@ -157,8 +157,7 @@ describe('GitManager', () => {
         beforeEach(async () => {
             mockElectron.invoke
                 .mockResolvedValueOnce(true)
-                .mockResolvedValueOnce('main')
-                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
+                .mockResolvedValueOnce('main');
             await gitManager.initialize();
             mockElectron.invoke.mockClear();
         });
@@ -203,8 +202,7 @@ describe('GitManager', () => {
             const errorHandler = jest.fn();
             eventBus.on('git.error', errorHandler);
 
-            await gitManager.refreshStatus();
-
+            await expect(gitManager.refreshStatus()).rejects.toThrow('Git error');
             expect(errorHandler).toHaveBeenCalledWith(error);
         });
     });
@@ -213,8 +211,7 @@ describe('GitManager', () => {
         beforeEach(async () => {
             mockElectron.invoke
                 .mockResolvedValueOnce(true)
-                .mockResolvedValueOnce('main')
-                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
+                .mockResolvedValueOnce('main');
             await gitManager.initialize();
             mockElectron.invoke.mockClear();
         });
