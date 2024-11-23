@@ -7,10 +7,11 @@ export class GitManager {
     async initialize() {
         try {
             const isRepo = await window.electron.invoke('git.isRepo');
-            if (isRepo) {
-                const branch = await window.electron.invoke('git.getCurrentBranch');
-                this.eventBus.emit('git.statusChanged', { branch, changes: [] });
+            if (!isRepo) {
+                return;
             }
+            const branch = await window.electron.invoke('git.getCurrentBranch');
+            this.eventBus.emit('git.statusChanged', { branch, changes: [] });
             console.log('Git Manager initialized successfully');
         } catch (error) {
             console.error('Failed to initialize Git Manager:', error);
