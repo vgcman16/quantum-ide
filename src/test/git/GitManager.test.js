@@ -43,9 +43,12 @@ describe('GitManager', () => {
         });
 
         it('should not get branch if not a repo', async () => {
+            // Create a new instance to avoid constructor initialization
+            const newGitManager = new GitManager({ eventBus });
             mockElectron.invoke.mockResolvedValueOnce(false);
-            await gitManager.initialize();
+            await newGitManager.initialize();
             expect(mockElectron.invoke).toHaveBeenCalledTimes(1);
+            expect(mockElectron.invoke).toHaveBeenCalledWith('git.isRepo');
         });
 
         it('should emit initialization error', async () => {
@@ -64,7 +67,8 @@ describe('GitManager', () => {
         beforeEach(async () => {
             mockElectron.invoke
                 .mockResolvedValueOnce(true)
-                .mockResolvedValueOnce('main');
+                .mockResolvedValueOnce('main')
+                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
             await gitManager.initialize();
             mockElectron.invoke.mockClear();
         });
@@ -157,7 +161,8 @@ describe('GitManager', () => {
         beforeEach(async () => {
             mockElectron.invoke
                 .mockResolvedValueOnce(true)
-                .mockResolvedValueOnce('main');
+                .mockResolvedValueOnce('main')
+                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
             await gitManager.initialize();
             mockElectron.invoke.mockClear();
         });
@@ -211,7 +216,8 @@ describe('GitManager', () => {
         beforeEach(async () => {
             mockElectron.invoke
                 .mockResolvedValueOnce(true)
-                .mockResolvedValueOnce('main');
+                .mockResolvedValueOnce('main')
+                .mockResolvedValueOnce({ branch: 'main', files: [] }); // status
             await gitManager.initialize();
             mockElectron.invoke.mockClear();
         });
