@@ -13,7 +13,7 @@ export class GitManager {
             this.eventBus.emit('git.statusChanged', { branch, changes: [] });
             console.log('Git Manager initialized successfully');
         } catch (error) {
-            console.error('Failed to initialize Git Manager:', error);
+            console.error('Failed to initialize Git Manager: ', error);
             this.eventBus.emit('git.error', error);
             throw error;
         }
@@ -27,7 +27,7 @@ export class GitManager {
                 changes: status.files || []
             });
         } catch (error) {
-            console.error('Failed to refresh git status:', error);
+            console.error('Failed to refresh git status: ', error);
             this.eventBus.emit('git.error', error);
             throw error;
         }
@@ -38,7 +38,7 @@ export class GitManager {
             await window.electron.invoke('git.stage', { path });
             await this.refreshStatus();
         } catch (error) {
-            console.error('Failed to stage file:', error);
+            console.error('Failed to stage file: ', error);
             this.eventBus.emit('git.error', error);
             throw error;
         }
@@ -49,7 +49,7 @@ export class GitManager {
             await window.electron.invoke('git.unstage', { path });
             await this.refreshStatus();
         } catch (error) {
-            console.error('Failed to unstage file:', error);
+            console.error('Failed to unstage file: ', error);
             this.eventBus.emit('git.error', error);
             throw error;
         }
@@ -60,7 +60,7 @@ export class GitManager {
             await window.electron.invoke('git.commit', { message });
             await this.refreshStatus();
         } catch (error) {
-            console.error('Failed to commit changes:', error);
+            console.error('Failed to commit changes: ', error);
             this.eventBus.emit('git.error', error);
             throw error;
         }
@@ -71,7 +71,7 @@ export class GitManager {
             await window.electron.invoke('git.push');
             await this.refreshStatus();
         } catch (error) {
-            console.error('Failed to push changes:', error);
+            console.error('Failed to push changes: ', error);
             this.eventBus.emit('git.error', error);
             throw error;
         }
@@ -82,7 +82,7 @@ export class GitManager {
             await window.electron.invoke('git.pull');
             await this.refreshStatus();
         } catch (error) {
-            console.error('Failed to pull changes:', error);
+            console.error('Failed to pull changes: ', error);
             this.eventBus.emit('git.error', error);
             throw error;
         }
@@ -93,7 +93,7 @@ export class GitManager {
             await window.electron.invoke('git.checkout', { branch });
             await this.refreshStatus();
         } catch (error) {
-            console.error('Failed to checkout branch:', error);
+            console.error('Failed to checkout branch: ', error);
             this.eventBus.emit('git.error', error);
             throw error;
         }
@@ -104,7 +104,7 @@ export class GitManager {
             await window.electron.invoke('git.createBranch', { name });
             await this.refreshStatus();
         } catch (error) {
-            console.error('Failed to create branch:', error);
+            console.error('Failed to create branch: ', error);
             this.eventBus.emit('git.error', error);
             throw error;
         }
@@ -114,7 +114,7 @@ export class GitManager {
         try {
             return await window.electron.invoke('git.getBranches');
         } catch (error) {
-            console.error('Failed to get branches:', error);
+            console.error('Failed to get branches: ', error);
             this.eventBus.emit('git.error', error);
             throw error;
         }
@@ -124,7 +124,7 @@ export class GitManager {
         try {
             return await window.electron.invoke('git.log', { limit });
         } catch (error) {
-            console.error('Failed to get commit history:', error);
+            console.error('Failed to get commit history: ', error);
             this.eventBus.emit('git.error', error);
             throw error;
         }
