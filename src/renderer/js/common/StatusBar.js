@@ -142,7 +142,7 @@ export class StatusBar {
 
         // Update line ending based on OS (could be made dynamic)
         const lineEnding = this.fileInfo.querySelector('.line-ending');
-        lineEnding.textContent = process.platform === 'win32' ? 'CRLF' : 'LF';
+        lineEnding.textContent = window.api.platform === 'win32' ? 'CRLF' : 'LF';
     }
 
     showMessage(message, type = 'info') {
