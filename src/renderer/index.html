@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum IDE</title>
+    <!-- Load styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/editor.css">
+    <link rel="stylesheet" href="styles/sidebar.css">
+    <link rel="stylesheet" href="styles/search.css">
+    <!-- Load xterm styles -->
+    <link rel="stylesheet" href="http://localhost:3033/node_modules/xterm/css/xterm.css">
+    <!-- Load xterm and addons -->
+    <script src="http://localhost:3033/node_modules/xterm/lib/xterm.js"></script>
+    <script src="http://localhost:3033/node_modules/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+    <script src="http://localhost:3033/node_modules/xterm-addon-web-links/lib/xterm-addon-web-links.js"></script>
+    <script src="http://localhost:3033/node_modules/xterm-addon-search/lib/xterm-addon-search.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar">
+            <!-- Explorer section -->
+            <div class="sidebar-section">
+                <div class="section-header">Explorer</div>
+                <div id="file-explorer" class="section-content"></div>
+            </div>
+            <!-- Search section -->
+            <div class="sidebar-section">
+                <div class="section-header">Search</div>
+                <div id="search-panel" class="section-content"></div>
+            </div>
+        </div>
+
+        <!-- Main editor area -->
+        <div id="main-content">
+            <div id="tabs-container"></div>
+            <div id="editor-container"></div>
+        </div>
+
+        <!-- Terminal panel -->
+        <div id="terminal-panel" class="panel"></div>
+    </div>
+
+    <!-- Load Monaco Editor -->
+    <script>
+        // Wait for server URL to be available
+        window.addEventListener('DOMContentLoaded', () => {
+            // Load Monaco loader
+            const script = document.createElement('script');
+            script.src = 'http://localhost:3033/node_modules/monaco-editor/min/vs/loader.js';
+            script.onload = () => {
+                // Configure AMD loader for Monaco
+                require.config({
+                    paths: {
+                        vs: 'http://localhost:3033/node_modules/monaco-editor/min/vs'
+                    }
+                });
+
+                // Set up Monaco workers
+                window.MonacoEnvironment = {
+                    getWorkerUrl: function(moduleId, label) {
+                        return 'http://localhost:3033/node_modules/monaco-editor/min/vs/base/worker/workerMain.js';
+                    }
+                };
+
+                // Load Monaco editor
+                require(['vs/editor/editor.main'], function() {
+                    // Monaco is now loaded and ready
+                    window.dispatchEvent(new Event('monaco-ready'));
+                });
+            };
+            document.body.appendChild(script);
+        });
+    </script>
+
+    <!-- Load dependencies -->
+    <script>
+        // Ensure proper module loading
+        window.global = window;
+    </script>
+
+    <!-- Load our modules -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

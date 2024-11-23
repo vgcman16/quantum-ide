@@ -1,0 +1,42 @@
+{
+  "name": "quantum-ide",
+  "version": "1.0.0",
+  "description": "A modern, AI-driven IDE",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "test": "jest",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^27.1.2",
+    "express": "^4.18.2",
+    "node-pty": "^0.10.1",
+    "xterm": "^4.19.0",
+    "xterm-addon-fit": "^0.5.0",
+    "xterm-addon-search": "^0.8.2",
+    "xterm-addon-web-links": "^0.6.0",
+    "monaco-editor": "^0.44.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^23.6.0",
+    "jest": "^29.7.0",
+    "eslint": "^8.54.0",
+    "prettier": "^3.1.0"
+  },
+  "build": {
+    "appId": "com.quantum.ide",
+    "mac": {
+      "category": "public.app-category.developer-tools"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}

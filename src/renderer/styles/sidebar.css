@@ -1,0 +1,294 @@
+/* Sidebar styles */
+.sidebar {
+    width: 250px;
+    height: 100%;
+    background-color: #252526;
+    color: #cccccc;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+}
+
+.sidebar-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.section-header {
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #bbbbbb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.section-header .actions {
+    display: flex;
+    gap: 8px;
+}
+
+.section-header .action-button {
+    padding: 2px;
+    background: none;
+    border: none;
+    color: #cccccc;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.section-header .action-button:hover {
+    opacity: 1;
+}
+
+.section-content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* File explorer styles */
+.file-tree {
+    padding: 4px 0;
+}
+
+.file-tree-item {
+    display: flex;
+    align-items: center;
+    padding: 3px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+}
+
+.file-tree-item:hover {
+    background-color: #2a2d2e;
+}
+
+.file-tree-item.active {
+    background-color: #37373d;
+}
+
+.file-tree-item .icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.file-tree-item .name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-tree-item .chevron {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: -16px;
+    font-size: 10px;
+    transform: rotate(0deg);
+    transition: transform 0.15s ease;
+}
+
+.file-tree-item.expanded > .chevron {
+    transform: rotate(90deg);
+}
+
+.directory-children {
+    margin-left: 16px;
+}
+
+/* Git status styles */
+.file-tree-item .git-status {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.file-tree-item[data-git-status="modified"] {
+    color: #4ec9b0;
+}
+
+.file-tree-item[data-git-status="added"] {
+    color: #608b4e;
+}
+
+.file-tree-item[data-git-status="deleted"] {
+    color: #f44747;
+    text-decoration: line-through;
+}
+
+.file-tree-item[data-git-status="renamed"] {
+    color: #569cd6;
+}
+
+.file-tree-item[data-git-status="untracked"] {
+    color: #c586c0;
+}
+
+.file-tree-item[data-git-staged="true"] {
+    font-style: italic;
+}
+
+/* Git status icons */
+.git-status[data-status="modified"]::before { content: "M"; }
+.git-status[data-status="added"]::before { content: "A"; }
+.git-status[data-status="deleted"]::before { content: "D"; }
+.git-status[data-status="renamed"]::before { content: "R"; }
+.git-status[data-status="untracked"]::before { content: "?"; }
+
+/* Context menu styles */
+.context-menu {
+    position: fixed;
+    background-color: #252526;
+    border: 1px solid #454545;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 4px 0;
+    z-index: 1000;
+    min-width: 160px;
+}
+
+.context-menu-item {
+    padding: 6px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #cccccc;
+}
+
+.context-menu-item:hover {
+    background-color: #2a2d2e;
+}
+
+.context-menu-item .shortcut {
+    margin-left: 20px;
+    opacity: 0.6;
+    font-size: 0.9em;
+}
+
+/* Git context menu items */
+.context-menu-item.git-item {
+    padding-left: 28px;
+    position: relative;
+}
+
+.context-menu-item.git-item::before {
+    content: "";
+    position: absolute;
+    left: 12px;
+    width: 12px;
+    height: 12px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.context-menu-item.git-stage::before {
+    content: "+";
+    color: #608b4e;
+}
+
+.context-menu-item.git-unstage::before {
+    content: "-";
+    color: #f44747;
+}
+
+.context-menu-item.git-revert::before {
+    content: "↺";
+    color: #569cd6;
+}
+
+/* Separator */
+.context-menu-separator {
+    height: 1px;
+    background-color: #454545;
+    margin: 4px 0;
+}
+
+/* File icons */
+.file-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+}
+
+/* File type colors */
+.file-tree-item[data-type="directory"] .icon {
+    color: #c09553;
+}
+
+.file-tree-item[data-type="file"] .icon {
+    color: #cccccc;
+}
+
+/* File extensions */
+.file-tree-item[data-ext="js"] .icon { color: #ffcb6b; }
+.file-tree-item[data-ext="jsx"] .icon { color: #61dafb; }
+.file-tree-item[data-ext="ts"] .icon { color: #007acc; }
+.file-tree-item[data-ext="tsx"] .icon { color: #007acc; }
+.file-tree-item[data-ext="css"] .icon { color: #42a5f5; }
+.file-tree-item[data-ext="html"] .icon { color: #e44d26; }
+.file-tree-item[data-ext="json"] .icon { color: #fbc02d; }
+.file-tree-item[data-ext="md"] .icon { color: #42a5f5; }
+.file-tree-item[data-ext="py"] .icon { color: #ffd43b; }
+.file-tree-item[data-ext="java"] .icon { color: #f44336; }
+.file-tree-item[data-ext="cpp"] .icon { color: #0277bd; }
+.file-tree-item[data-ext="go"] .icon { color: #00acc1; }
+.file-tree-item[data-ext="rs"] .icon { color: #ff7043; }
+
+/* Scrollbar styles */
+.section-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.section-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.section-content::-webkit-scrollbar-thumb {
+    background: #424242;
+    border-radius: 5px;
+}
+
+.section-content::-webkit-scrollbar-thumb:hover {
+    background: #4f4f4f;
+}
+
+/* Branch indicator */
+.branch-indicator {
+    display: flex;
+    align-items: center;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: #cccccc;
+    background-color: #2d2d2d;
+    border-top: 1px solid #3c3c3c;
+}
+
+.branch-indicator .branch-icon {
+    margin-right: 6px;
+}
+
+.branch-indicator .branch-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.branch-indicator .sync-status {
+    margin-left: 6px;
+    font-size: 14px;
+}

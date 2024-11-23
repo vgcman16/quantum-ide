@@ -1,0 +1,187 @@
+/* Editor container */
+#editor-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #1e1e1e;
+}
+
+/* Tab bar */
+.tab-bar {
+    display: flex;
+    background-color: #252526;
+    height: 35px;
+    overflow-x: auto;
+    user-select: none;
+}
+
+.tab-bar::-webkit-scrollbar {
+    height: 3px;
+}
+
+.tab-bar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tab-bar::-webkit-scrollbar-thumb {
+    background: #424242;
+    border-radius: 3px;
+}
+
+.tab-bar::-webkit-scrollbar-thumb:hover {
+    background: #4f4f4f;
+}
+
+/* Tab item */
+.tab {
+    display: flex;
+    align-items: center;
+    min-width: 120px;
+    max-width: 200px;
+    height: 100%;
+    padding: 0 10px;
+    background-color: #2d2d2d;
+    border-right: 1px solid #1e1e1e;
+    color: #969696;
+    font-size: 13px;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.1s ease;
+}
+
+.tab.active {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.tab:hover {
+    background-color: #2a2a2a;
+}
+
+.tab .icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.tab .name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tab .close {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 6px;
+    border-radius: 3px;
+    opacity: 0;
+    transition: opacity 0.1s ease;
+}
+
+.tab:hover .close,
+.tab.active .close {
+    opacity: 0.8;
+}
+
+.tab .close:hover {
+    background-color: #404040;
+    opacity: 1;
+}
+
+/* Editor area */
+.editor-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.monaco-editor {
+    width: 100%;
+    height: 100%;
+}
+
+/* File type colors */
+.tab[data-ext="js"] .icon { color: #ffcb6b; }
+.tab[data-ext="jsx"] .icon { color: #61dafb; }
+.tab[data-ext="ts"] .icon { color: #007acc; }
+.tab[data-ext="tsx"] .icon { color: #007acc; }
+.tab[data-ext="css"] .icon { color: #42a5f5; }
+.tab[data-ext="scss"] .icon { color: #f06292; }
+.tab[data-ext="html"] .icon { color: #e44d26; }
+.tab[data-ext="json"] .icon { color: #fbc02d; }
+.tab[data-ext="md"] .icon { color: #42a5f5; }
+.tab[data-ext="py"] .icon { color: #ffd43b; }
+.tab[data-ext="java"] .icon { color: #f44336; }
+.tab[data-ext="cpp"] .icon { color: #0277bd; }
+.tab[data-ext="go"] .icon { color: #00acc1; }
+.tab[data-ext="rs"] .icon { color: #ff7043; }
+
+/* Empty state */
+.empty-editor {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #6d6d6d;
+    font-size: 14px;
+}
+
+.empty-editor .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.empty-editor .message {
+    max-width: 300px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* Editor modifications */
+.monaco-editor .margin,
+.monaco-editor .monaco-editor-background {
+    background-color: #1e1e1e !important;
+}
+
+.monaco-editor .line-numbers {
+    color: #858585 !important;
+}
+
+/* Editor overlays */
+.editor-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(30, 30, 30, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.editor-overlay .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #404040;
+    border-top-color: #007acc;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
