@@ -1,11 +1,12 @@
-// Import required polyfills
+// Import and set up TextEncoder/TextDecoder polyfills first
 const { TextEncoder, TextDecoder } = require('util');
-const { JSDOM } = require('jsdom');
-
-// Add TextEncoder and TextDecoder to global scope
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
+// Now import JSDOM
+const { JSDOM } = require('jsdom');
+
+// Create JSDOM instance
 const dom = new JSDOM('<!doctype html><html><body></body></html>', {
     url: 'http://localhost',
     pretendToBeVisual: true,
