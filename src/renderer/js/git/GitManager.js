@@ -9,7 +9,8 @@ export class GitManager {
             const isRepo = await window.electron.invoke('git.isRepo');
             if (isRepo) {
                 const branch = await window.electron.invoke('git.getCurrentBranch');
-                await this.refreshStatus();
+                // Don't refresh status during initialization
+                this.eventBus.emit('git.statusChanged', { branch, changes: [] });
             }
             console.log('Git Manager initialized successfully');
         } catch (error) {
