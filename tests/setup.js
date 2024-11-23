@@ -1,6 +1,3 @@
-// Import Jest functions
-const { afterEach } = require('@jest/globals');
-
 // Import and set up TextEncoder/TextDecoder polyfills first
 const { TextEncoder, TextDecoder } = require('util');
 global.TextEncoder = TextEncoder;
@@ -113,7 +110,7 @@ global.console = {
 };
 
 // Clean up function to reset mocks between tests
-afterEach(() => {
+global.afterEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
     document.body.innerHTML = '';
