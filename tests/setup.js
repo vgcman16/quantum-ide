@@ -108,10 +108,3 @@ global.console = {
     warn: jest.fn(originalConsole.warn),
     info: jest.fn(originalConsole.info)
 };
-
-// Clean up function to reset mocks between tests
-global.afterEach(() => {
-    jest.clearAllMocks();
-    localStorage.clear();
-    document.body.innerHTML = '';
-});

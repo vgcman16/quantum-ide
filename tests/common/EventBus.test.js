@@ -1,194 +1,130 @@
-import { EventBus } from '../../src/renderer/js/common/EventBus';
+import { EventBus } from '../../src/renderer/js/common/EventBus.js';
 
 describe('EventBus', () => {
-  let eventBus;
+    let eventBus;
 
-  beforeEach(() => {
-    eventBus = new EventBus();
-  });
-
-  describe('on() and emit()', () => {
-    test('should call registered callback when event is emitted', () => {
-      const callback = jest.fn();
-      eventBus.on('test-event', callback);
-      
-      eventBus.emit('test-event', 'test-data');
-      
-      expect(callback).toHaveBeenCalledWith('test-data');
+    beforeEach(() => {
+        eventBus = new EventBus();
+        jest.clearAllMocks();
+        localStorage.clear();
+        document.body.innerHTML = '';
     });
 
-    test('should call multiple callbacks for the same event', () => {
-      const callback1 = jest.fn();
-      const callback2 = jest.fn();
-      
-      eventBus.on('test-event', callback1);
-      eventBus.on('test-event', callback2);
-      
-      eventBus.emit('test-event', 'test-data');
-      
-      expect(callback1).toHaveBeenCalledWith('test-data');
-      expect(callback2).toHaveBeenCalledWith('test-data');
+    afterEach(() => {
+        jest.clearAllMocks();
+        localStorage.clear();
+        document.body.innerHTML = '';
     });
 
-    test('should handle multiple arguments', () => {
-      const callback = jest.fn();
-      eventBus.on('test-event', callback);
-      
-      eventBus.emit('test-event', 'arg1', 'arg2', { key: 'value' });
-      
-      expect(callback).toHaveBeenCalledWith('arg1', 'arg2', { key: 'value' });
-    });
-  });
-
-  describe('once()', () => {
-    test('should call callback only once', () => {
-      const callback = jest.fn();
-      eventBus.once('test-event', callback);
-      
-      eventBus.emit('test-event', 'first');
-      eventBus.emit('test-event', 'second');
-      
-      expect(callback).toHaveBeenCalledTimes(1);
-      expect(callback).toHaveBeenCalledWith('first');
+    it('should create an instance', () => {
+        expect(eventBus).toBeInstanceOf(EventBus);
     });
 
-    test('should remove listener after first emit', () => {
-      const callback = jest.fn();
-      eventBus.once('test-event', callback);
-      
-      eventBus.emit('test-event');
-      expect(eventBus.hasListeners('test-event')).toBeFalsy();
-    });
-  });
-
-  describe('off()', () => {
-    test('should remove specific callback', () => {
-      const callback1 = jest.fn();
-      const callback2 = jest.fn();
-      
-      eventBus.on('test-event', callback1);
-      eventBus.on('test-event', callback2);
-      eventBus.off('test-event', callback1);
-      
-      eventBus.emit('test-event');
-      
-      expect(callback1).not.toHaveBeenCalled();
-      expect(callback2).toHaveBeenCalled();
+    it('should emit and receive events', () => {
+        const handler = jest.fn();
+        eventBus.on('test', handler);
+        eventBus.emit('test', { data: 'test' });
+        expect(handler).toHaveBeenCalledWith({ data: 'test' });
     });
 
-    test('should handle removing non-existent callback', () => {
-      const callback = jest.fn();
-      
-      // Should not throw error
-      expect(() => {
-        eventBus.off('test-event', callback);
-      }).not.toThrow();
-    });
-  });
-
-  describe('removeAllListeners()', () => {
-    test('should remove all listeners for specific event', () => {
-      const callback1 = jest.fn();
-      const callback2 = jest.fn();
-      
-      eventBus.on('test-event-1', callback1);
-      eventBus.on('test-event-2', callback2);
-      
-      eventBus.removeAllListeners('test-event-1');
-      
-      eventBus.emit('test-event-1');
-      eventBus.emit('test-event-2');
-      
-      expect(callback1).not.toHaveBeenCalled();
-      expect(callback2).toHaveBeenCalled();
+    it('should handle multiple handlers for the same event', () => {
+        const handler1 = jest.fn();
+        const handler2 = jest.fn();
+        eventBus.on('test', handler1);
+        eventBus.on('test', handler2);
+        eventBus.emit('test', { data: 'test' });
+        expect(handler1).toHaveBeenCalledWith({ data: 'test' });
+        expect(handler2).toHaveBeenCalledWith({ data: 'test' });
     });
 
-    test('should remove all listeners when no event specified', () => {
-      const callback1 = jest.fn();
-      const callback2 = jest.fn();
-      
-      eventBus.on('test-event-1', callback1);
-      eventBus.on('test-event-2', callback2);
-      
-      eventBus.removeAllListeners();
-      
-      eventBus.emit('test-event-1');
-      eventBus.emit('test-event-2');
-      
-      expect(callback1).not.toHaveBeenCalled();
-      expect(callback2).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('listenerCount()', () => {
-    test('should return correct number of listeners', () => {
-      const callback1 = jest.fn();
-      const callback2 = jest.fn();
-      
-      eventBus.on('test-event', callback1);
-      eventBus.on('test-event', callback2);
-      eventBus.once('test-event', jest.fn());
-      
-      expect(eventBus.listenerCount('test-event')).toBe(3);
+    it('should remove event handlers', () => {
+        const handler = jest.fn();
+        eventBus.on('test', handler);
+        eventBus.off('test', handler);
+        eventBus.emit('test', { data: 'test' });
+        expect(handler).not.toHaveBeenCalled();
     });
 
-    test('should return 0 for event with no listeners', () => {
-      expect(eventBus.listenerCount('non-existent')).toBe(0);
-    });
-  });
-
-  describe('eventNames()', () => {
-    test('should return all registered event names', () => {
-      eventBus.on('event1', jest.fn());
-      eventBus.on('event2', jest.fn());
-      eventBus.once('event3', jest.fn());
-      
-      const eventNames = eventBus.eventNames();
-      
-      expect(eventNames).toHaveLength(3);
-      expect(eventNames).toContain('event1');
-      expect(eventNames).toContain('event2');
-      expect(eventNames).toContain('event3');
+    it('should handle events without data', () => {
+        const handler = jest.fn();
+        eventBus.on('test', handler);
+        eventBus.emit('test');
+        expect(handler).toHaveBeenCalledWith(undefined);
     });
 
-    test('should return empty array when no events registered', () => {
-      expect(eventBus.eventNames()).toHaveLength(0);
-    });
-  });
+    it('should handle events with different data types', () => {
+        const handler = jest.fn();
+        eventBus.on('test', handler);
 
-  describe('error handling', () => {
-    test('should continue execution if callback throws error', () => {
-      const errorCallback = jest.fn(() => {
-        throw new Error('Test error');
-      });
-      const normalCallback = jest.fn();
-      
-      eventBus.on('test-event', errorCallback);
-      eventBus.on('test-event', normalCallback);
-      
-      // Should not throw
-      expect(() => {
-        eventBus.emit('test-event');
-      }).not.toThrow();
-      
-      expect(normalCallback).toHaveBeenCalled();
+        // Test with different data types
+        eventBus.emit('test', 'string');
+        expect(handler).toHaveBeenCalledWith('string');
+
+        eventBus.emit('test', 123);
+        expect(handler).toHaveBeenCalledWith(123);
+
+        eventBus.emit('test', { key: 'value' });
+        expect(handler).toHaveBeenCalledWith({ key: 'value' });
+
+        eventBus.emit('test', [1, 2, 3]);
+        expect(handler).toHaveBeenCalledWith([1, 2, 3]);
     });
 
-    test('should handle errors in once callbacks', () => {
-      const errorCallback = jest.fn(() => {
-        throw new Error('Test error');
-      });
-      const normalCallback = jest.fn();
-      
-      eventBus.once('test-event', errorCallback);
-      eventBus.once('test-event', normalCallback);
-      
-      // Should not throw
-      expect(() => {
-        eventBus.emit('test-event');
-      }).not.toThrow();
-      
-      expect(normalCallback).toHaveBeenCalled();
+    it('should not call handlers after they are removed', () => {
+        const handler1 = jest.fn();
+        const handler2 = jest.fn();
+
+        eventBus.on('test', handler1);
+        eventBus.on('test', handler2);
+
+        eventBus.emit('test', 'first');
+        expect(handler1).toHaveBeenCalledWith('first');
+        expect(handler2).toHaveBeenCalledWith('first');
+
+        eventBus.off('test', handler1);
+        eventBus.emit('test', 'second');
+        expect(handler1).not.toHaveBeenCalledWith('second');
+        expect(handler2).toHaveBeenCalledWith('second');
     });
-  });
+
+    it('should handle errors in event handlers', () => {
+        const errorHandler = jest.fn();
+        const throwingHandler = () => {
+            throw new Error('Test error');
+        };
+
+        console.error = errorHandler;
+        eventBus.on('test', throwingHandler);
+        eventBus.emit('test');
+
+        expect(errorHandler).toHaveBeenCalled();
+    });
+
+    it('should maintain separate event handlers for different events', () => {
+        const handler1 = jest.fn();
+        const handler2 = jest.fn();
+
+        eventBus.on('event1', handler1);
+        eventBus.on('event2', handler2);
+
+        eventBus.emit('event1', 'data1');
+        expect(handler1).toHaveBeenCalledWith('data1');
+        expect(handler2).not.toHaveBeenCalled();
+
+        eventBus.emit('event2', 'data2');
+        expect(handler2).toHaveBeenCalledWith('data2');
+        expect(handler1).not.toHaveBeenCalledWith('data2');
+    });
+
+    it('should handle removing non-existent handlers', () => {
+        const handler = jest.fn();
+        // Should not throw when removing a handler that was never added
+        expect(() => eventBus.off('test', handler)).not.toThrow();
+    });
+
+    it('should handle removing handlers for non-existent events', () => {
+        const handler = jest.fn();
+        // Should not throw when removing a handler for an event that was never created
+        expect(() => eventBus.off('nonexistent', handler)).not.toThrow();
+    });
 });

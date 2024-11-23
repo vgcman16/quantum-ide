@@ -7,22 +7,11 @@ describe('StatusBar', () => {
     let eventBus;
 
     beforeEach(() => {
-        // Set up DOM
         container = document.createElement('div');
         document.body.appendChild(container);
-
-        // Mock window.api
-        global.window = {
-            api: {
-                platform: 'darwin'
-            }
-        };
-
-        // Create EventBus
         eventBus = new EventBus();
-
-        // Create StatusBar instance
         statusBar = new StatusBar({ container, eventBus });
+        jest.clearAllMocks();
     });
 
     afterEach(() => {
@@ -47,8 +36,7 @@ describe('StatusBar', () => {
 
     describe('Git info updates', () => {
         it('should update branch name', () => {
-            const branch = 'feature';
-            eventBus.emit('git.statusChanged', { branch, changes: [] });
+            eventBus.emit('git.statusChanged', { branch: 'feature', changes: [] });
             expect(container.querySelector('.branch-name').textContent).toBe('feature');
         });
 
@@ -91,6 +79,11 @@ describe('StatusBar', () => {
             eventBus.emit('editor.cursorChanged', { line: 0, column: 0 });
             expect(container.querySelector('.cursor-position').textContent).toBe('Ln 0, Col 0');
         });
+
+        it('should handle large line and column numbers', () => {
+            eventBus.emit('editor.cursorChanged', { line: 9999, column: 999 });
+            expect(container.querySelector('.cursor-position').textContent).toBe('Ln 9999, Col 999');
+        });
     });
 
     describe('File info updates', () => {
@@ -105,10 +98,10 @@ describe('StatusBar', () => {
         });
 
         it('should update line ending based on platform', () => {
+            window.api.platform = 'darwin';
             eventBus.emit('editor.activeFileChanged', { path: 'test.js' });
             expect(container.querySelector('.line-ending').textContent).toBe('LF');
 
-            // Test Windows platform
             window.api.platform = 'win32';
             eventBus.emit('editor.activeFileChanged', { path: 'test.js' });
             expect(container.querySelector('.line-ending').textContent).toBe('CRLF');
@@ -123,6 +116,11 @@ describe('StatusBar', () => {
             eventBus.emit('editor.activeFileChanged', { path: 'test.js' });
             expect(container.querySelector('.file-info').style.display).toBe('flex');
         });
+
+        it('should handle files without extensions', () => {
+            eventBus.emit('editor.activeFileChanged', { path: 'Dockerfile' });
+            expect(container.querySelector('.indent-type').textContent).toBe('Spaces: 2');
+        });
     });
 
     describe('Message display', () => {
@@ -133,7 +131,6 @@ describe('StatusBar', () => {
             expect(message.textContent).toBe('Test message');
             expect(message.classList.contains('info')).toBe(true);
 
-            // Check message is removed after timeout
             setTimeout(() => {
                 expect(container.querySelector('.status-message')).toBeFalsy();
                 done();

@@ -16,12 +16,11 @@ describe('GitManager', () => {
             send: jest.fn(),
             receive: jest.fn()
         };
-        global.window = {
-            electron: mockElectron
-        };
+        window.electron = mockElectron;
 
         // Create GitManager instance
         gitManager = new GitManager({ eventBus });
+        jest.clearAllMocks();
     });
 
     afterEach(() => {
@@ -47,6 +46,14 @@ describe('GitManager', () => {
             mockElectron.invoke.mockResolvedValueOnce(false);
             await gitManager.initialize();
             expect(mockElectron.invoke).toHaveBeenCalledTimes(1);
+        });
+
+        it('should emit initialization error', async () => {
+            const error = new Error('Git not found');
+            mockElectron.invoke.mockRejectedValueOnce(error);
+            const emitSpy = jest.spyOn(eventBus, 'emit');
+            await gitManager.initialize();
+            expect(emitSpy).toHaveBeenCalledWith('git.error', error);
         });
     });
 
@@ -163,6 +170,18 @@ describe('GitManager', () => {
 
             expect(mockElectron.invoke).toHaveBeenCalledWith('git.status');
         });
+
+        it('should emit error events', async () => {
+            const error = new Error('Git error');
+            mockElectron.invoke.mockRejectedValueOnce(error);
+
+            const errorHandler = jest.fn();
+            eventBus.on('git.error', errorHandler);
+
+            await gitManager.refreshStatus();
+
+            expect(errorHandler).toHaveBeenCalledWith(error);
+        });
     });
 
     describe('Error handling', () => {
@@ -178,21 +197,44 @@ describe('GitManager', () => {
             const error = new Error('Stage failed');
             mockElectron.invoke.mockRejectedValueOnce(error);
 
+            const errorHandler = jest.fn();
+            eventBus.on('git.error', errorHandler);
+
             await expect(gitManager.stage('test.js')).rejects.toThrow('Stage failed');
+            expect(errorHandler).toHaveBeenCalledWith(error);
         });
 
         it('should handle commit errors', async () => {
             const error = new Error('Commit failed');
             mockElectron.invoke.mockRejectedValueOnce(error);
 
+            const errorHandler = jest.fn();
+            eventBus.on('git.error', errorHandler);
+
             await expect(gitManager.commit('test')).rejects.toThrow('Commit failed');
+            expect(errorHandler).toHaveBeenCalledWith(error);
         });
 
         it('should handle push errors', async () => {
             const error = new Error('Push failed');
             mockElectron.invoke.mockRejectedValueOnce(error);
 
+            const errorHandler = jest.fn();
+            eventBus.on('git.error', errorHandler);
+
             await expect(gitManager.push()).rejects.toThrow('Push failed');
+            expect(errorHandler).toHaveBeenCalledWith(error);
+        });
+
+        it('should handle branch checkout errors', async () => {
+            const error = new Error('Checkout failed');
+            mockElectron.invoke.mockRejectedValueOnce(error);
+
+            const errorHandler = jest.fn();
+            eventBus.on('git.error', errorHandler);
+
+            await expect(gitManager.checkout('feature')).rejects.toThrow('Checkout failed');
+            expect(errorHandler).toHaveBeenCalledWith(error);
         });
     });
 });
