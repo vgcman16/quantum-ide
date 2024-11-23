@@ -1,62 +1,39 @@
-// Mock Electron
-const mockIpcRenderer = {
-  on: jest.fn(),
-  send: jest.fn(),
-  invoke: jest.fn(),
-  removeListener: jest.fn(),
-  removeAllListeners: jest.fn()
+// Mock DOM environment setup
+const { JSDOM } = require('jsdom');
+
+const dom = new JSDOM('<!doctype html><html><body></body></html>', {
+    url: 'http://localhost',
+    pretendToBeVisual: true,
+    resources: 'usable'
+});
+
+// Set up global objects to mimic browser environment
+global.window = dom.window;
+global.document = dom.window.document;
+global.navigator = {
+    userAgent: 'node.js'
 };
 
-const mockIpcMain = {
-  on: jest.fn(),
-  handle: jest.fn(),
-  removeHandler: jest.fn(),
-  removeAllHandlers: jest.fn()
+// Mock requestAnimationFrame
+global.requestAnimationFrame = function(callback) {
+    return setTimeout(callback, 0);
 };
 
-jest.mock('electron', () => ({
-  app: {
-    getPath: jest.fn(),
-    on: jest.fn(),
-    whenReady: jest.fn().mockResolvedValue(true)
-  },
-  ipcMain: mockIpcMain,
-  ipcRenderer: mockIpcRenderer,
-  BrowserWindow: jest.fn().mockImplementation(() => ({
-    loadFile: jest.fn(),
-    webContents: {
-      openDevTools: jest.fn(),
-      send: jest.fn()
-    },
-    on: jest.fn(),
-    show: jest.fn(),
-    close: jest.fn()
-  }))
-}));
-
-// Mock node-pty
-jest.mock('node-pty', () => ({
-  spawn: jest.fn().mockImplementation(() => ({
-    on: jest.fn(),
-    write: jest.fn(),
-    resize: jest.fn(),
-    kill: jest.fn()
-  }))
-}));
-
-// Mock Monaco Editor
-global.monaco = {
-  editor: {
-    create: jest.fn(),
-    defineTheme: jest.fn(),
-    setTheme: jest.fn()
-  }
+global.cancelAnimationFrame = function(id) {
+    clearTimeout(id);
 };
 
-// Mock DOM methods and properties not available in JSDOM
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
+// Mock localStorage
+const localStorageMock = {
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+    clear: jest.fn(),
+    removeItem: jest.fn()
+};
+global.localStorage = localStorageMock;
+
+// Mock matchMedia
+global.matchMedia = query => ({
     matches: false,
     media: query,
     onchange: null,
@@ -65,20 +42,70 @@ Object.defineProperty(window, 'matchMedia', {
     addEventListener: jest.fn(),
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn()
-  }))
 });
 
 // Mock ResizeObserver
 global.ResizeObserver = class ResizeObserver {
-  constructor(callback) {
-    this.callback = callback;
-  }
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+    constructor(callback) {
+        this.callback = callback;
+    }
+    observe() {}
+    unobserve() {}
+    disconnect() {}
 };
 
-// Clean up after each test
+// Mock IntersectionObserver
+global.IntersectionObserver = class IntersectionObserver {
+    constructor(callback) {
+        this.callback = callback;
+    }
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+};
+
+// Mock window.electron
+global.window.electron = {
+    invoke: jest.fn(),
+    send: jest.fn(),
+    receive: jest.fn(),
+    removeListener: jest.fn()
+};
+
+// Mock window.api
+global.window.api = {
+    platform: 'darwin',
+    env: {
+        isDev: true,
+        platform: 'darwin',
+        arch: 'x64',
+        cwd: '/test/path'
+    },
+    path: {
+        sep: '/',
+        join: (...args) => args.join('/'),
+        dirname: (p) => p.split('/').slice(0, -1).join('/'),
+        basename: (p) => p.split('/').pop(),
+        extname: (p) => {
+            const parts = p.split('.');
+            return parts.length > 1 ? '.' + parts.pop() : '';
+        }
+    }
+};
+
+// Mock console methods
+const originalConsole = { ...console };
+global.console = {
+    ...console,
+    log: jest.fn(originalConsole.log),
+    error: jest.fn(originalConsole.error),
+    warn: jest.fn(originalConsole.warn),
+    info: jest.fn(originalConsole.info)
+};
+
+// Clean up function to reset mocks between tests
 afterEach(() => {
-  jest.clearAllMocks();
+    jest.clearAllMocks();
+    localStorage.clear();
+    document.body.innerHTML = '';
 });
